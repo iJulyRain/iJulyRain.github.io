@@ -344,7 +344,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2018-08-07 16:24:18" itemprop="dateModified" datetime="2018-08-07T16:24:18+08:00">2018-08-07</time>
+                <time title="Modified: 2018-08-07 20:16:39" itemprop="dateModified" datetime="2018-08-07T20:16:39+08:00">2018-08-07</time>
               
             
           </span>
@@ -759,18 +759,18 @@ g          go
 <p><img src="/2018/08/05/使用nuttx/makefile.png" alt=""></p>
 <p><code>myled_main.c</code></p>
 <p><img src="/2018/08/05/使用nuttx/myledapp.png" alt=""></p>
-<p>到此，<code>myled</code>应用就写完了，LED1会以1秒的频率量灭。</p>
+<p>到此，<code>myled</code>应用就写完了，LED1会以1秒的频率亮灭。</p>
 <p>下面将<code>myled</code>这个应用编译进来</p>
 <pre><code>Application Configuration  ---&gt;
     Examples  ---&gt;
         [*] &quot;MyLED&quot; example
         (100) MyLED task priority
         (2048) MyLED stack size
-</code></pre><p>编译，下载nuttx.bin，就可以看到myled这个应用了，运行后可以看到LED0在闪烁:</p>
+</code></pre><p>编译，下载nuttx.bin，就可以看到myled这个应用了，运行后可以看到LED1在闪烁:</p>
 <p><img src="/2018/08/05/使用nuttx/myledrun.png" alt=""></p>
 <h2 id="5-如何设置app自启动"><a href="#5-如何设置app自启动" class="headerlink" title="5. 如何设置app自启动"></a>5. 如何设置app自启动</h2><p>以上我们写的myled，是不能自启动的，系统复位以后，就又回到nsh了。</p>
 <p>下面说下如何让nuttx一启动就运行<code>myled</code></p>
-<p>nuttx是支持启动脚本的，这点与linux相似，可以通过<code>/etc/init.d/rcS</code>脚本启动应用程序。下面是就是如何将rcS文件做到系统中了。</p>
+<p>nuttx是支持启动脚本的，这点与linux相似，可以通过<code>/etc/init.d/rcS</code>脚本启动应用程序。下面就是如何将rcS文件做到系统中了。</p>
 <p>怎么做，nuttx其实已经说了，说明在<code>apps/nshlib/README.txt</code>，写的比较散，下面我来演示下如何具体操作:</p>
 <p>首先在<code>configs/stm32f4discovery/include</code>下创建<code>etc</code>，结构如下：</p>
 <pre><code>etc
