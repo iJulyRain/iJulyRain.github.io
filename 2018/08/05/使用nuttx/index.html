@@ -109,6 +109,7 @@
 
 
   <meta name="description" content="使用Nuttx0. 前言这里不说Nuttx特别底层的东西，只说如何使用Nuttx开发应用程序，因为大部分情况，领导关心的是应用如何写的快而不是底层是如何工作的。 本文档默认你会使用Kconfig、Linux。 之所以选择Nuttx作为操作系统，一是因为Nuttx提供的接口支持Posix，大部分Linux上的应用程序都可以移植过来，对于比较复杂的应用，这点是极好的；二是Nuttx支持动态加载程">
+<meta name="keywords" content="nuttx">
 <meta property="og:type" content="article">
 <meta property="og:title" content="使用nuttx">
 <meta property="og:url" content="https://ijulyrain.github.io/2018/08/05/使用nuttx/index.html">
@@ -128,7 +129,28 @@
 <meta property="og:image" content="https://ijulyrain.github.io/2018/08/05/使用nuttx/usart1.png">
 <meta property="og:image" content="https://ijulyrain.github.io/2018/08/05/使用nuttx/make.png">
 <meta property="og:image" content="https://ijulyrain.github.io/2018/08/05/使用nuttx/jlink.png">
-<meta property="og:updated_time" content="2018-08-06T13:16:51.000Z">
+<meta property="og:image" content="https://ijulyrain.github.io/2018/08/05/使用nuttx/jlinkexe.png">
+<meta property="og:image" content="https://ijulyrain.github.io/2018/08/05/使用nuttx/minicom.png">
+<meta property="og:image" content="https://ijulyrain.github.io/2018/08/05/使用nuttx/led.png">
+<meta property="og:image" content="https://ijulyrain.github.io/2018/08/05/使用nuttx/gpio.png">
+<meta property="og:image" content="https://ijulyrain.github.io/2018/08/05/使用nuttx/gpio_dev.png">
+<meta property="og:image" content="https://ijulyrain.github.io/2018/08/05/使用nuttx/gpio_ctrl.png">
+<meta property="og:image" content="https://ijulyrain.github.io/2018/08/05/使用nuttx/bsp.png">
+<meta property="og:image" content="https://ijulyrain.github.io/2018/08/05/使用nuttx/pin2.png">
+<meta property="og:image" content="https://ijulyrain.github.io/2018/08/05/使用nuttx/pin3.png">
+<meta property="og:image" content="https://ijulyrain.github.io/2018/08/05/使用nuttx/pin.png">
+<meta property="og:image" content="https://ijulyrain.github.io/2018/08/05/使用nuttx/pin4.png">
+<meta property="og:image" content="https://ijulyrain.github.io/2018/08/05/使用nuttx/pin5.png">
+<meta property="og:image" content="https://ijulyrain.github.io/2018/08/05/使用nuttx/bringup.png">
+<meta property="og:image" content="https://ijulyrain.github.io/2018/08/05/使用nuttx/gpout.png">
+<meta property="og:image" content="https://ijulyrain.github.io/2018/08/05/使用nuttx/myled.png">
+<meta property="og:image" content="https://ijulyrain.github.io/2018/08/05/使用nuttx/kconfig.png">
+<meta property="og:image" content="https://ijulyrain.github.io/2018/08/05/使用nuttx/defs.png">
+<meta property="og:image" content="https://ijulyrain.github.io/2018/08/05/使用nuttx/makefile.png">
+<meta property="og:image" content="https://ijulyrain.github.io/2018/08/05/使用nuttx/myledapp.png">
+<meta property="og:image" content="https://ijulyrain.github.io/2018/08/05/使用nuttx/myledrun.png">
+<meta property="og:image" content="https://ijulyrain.github.io/2018/08/05/使用nuttx/myledrun2.png">
+<meta property="og:updated_time" content="2018-08-07T08:24:18.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="使用nuttx">
 <meta name="twitter:description" content="使用Nuttx0. 前言这里不说Nuttx特别底层的东西，只说如何使用Nuttx开发应用程序，因为大部分情况，领导关心的是应用如何写的快而不是底层是如何工作的。 本文档默认你会使用Kconfig、Linux。 之所以选择Nuttx作为操作系统，一是因为Nuttx提供的接口支持Posix，大部分Linux上的应用程序都可以移植过来，对于比较复杂的应用，这点是极好的；二是Nuttx支持动态加载程">
@@ -357,7 +379,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2018-08-06 21:16:51" itemprop="dateModified" datetime="2018-08-06T21:16:51+08:00">2018-08-06</time>
+                <time title="Modified: 2018-08-07 16:24:18" itemprop="dateModified" datetime="2018-08-07T16:24:18+08:00">2018-08-07</time>
               
             
           </span>
@@ -397,12 +419,12 @@
 <ol>
 <li>Nuttx的目录结构</li>
 <li>如何编译及下载到开发板上</li>
+<li>如何驱动一个设备(这里写一个闪灯的例子，使用GPIO方式驱动)</li>
 <li>如何在app中添加一个应用</li>
-<li>如何驱动一个设备(这里写一个闪灯的例子，使用GPIO和PWM两种方式驱动)</li>
-<li>自己写的一个多线程应用框架</li>
+<li>如何设置app自启动</li>
 </ol>
 <p>题主这里使用的开发板是从淘宝买的一个cortex-m4的开发板，芯片是STM32F407VET6。</p>
-<p>ps. 下面要说的东西，大部分都是从Nuttx官方的文档中得到的。</p>
+<p>ps. 下面要说的东西，大部分都是从Nuttx官方的文档中得到的，小部分自己加工的，如有说错的地方，请斧正：<a href="ijulyrain@gmail.com">ijulyrain@gmail.com</a></p>
 <h2 id="1-Nuttx的目录结构"><a href="#1-Nuttx的目录结构" class="headerlink" title="1. Nuttx的目录结构"></a>1. Nuttx的目录结构</h2><p>在说Nuttx目录之前，先说下如何安装Nuttx。</p>
 <p>Nuttx的官方网站是：<a href="http://www.nuttx.org" target="_blank" rel="noopener">http://www.nuttx.org</a></p>
 <p>Nuttx的源代码托管在<a href="https://bitbucket.org" target="_blank" rel="noopener">bitbucket</a>上，一个类似<a href="https://github.com" target="_blank" rel="noopener">github</a>的代码托管网站。</p>
@@ -421,7 +443,7 @@ git clone https://bitbucket.org/nuttx/tools.git tools
   |         |         |
 nuttx/    tools     apps/
 </code></pre><p>ok，nuttx最主要的两部分nuttx和apps就拿到手了。</p>
-<p>tools里面是一些工具，例如kconfig-frontends、genromfs等工具。</p>
+<p>tools里面是一些工具，例如kconfig-frontends、genromfs等，缺什么装什么即可.</p>
 <p>题主写这边文档的时候，Nuttx最新的版本是7.25，apps最新版本是7.26.</p>
 <p>进入到nuttx中，看一下内核的目录：</p>
 <p><img src="/2018/08/05/使用nuttx/目录.png" alt=""></p>
@@ -504,12 +526,12 @@ nuttx/    tools     apps/
 </tr>
 </tbody>
 </table>
-<p>接下来的开发中，我们最常进入的几个目录依次是：configs、arch、drivers</p>
+<p>接下来的开发中，我们最常进入的几个目录依次是：<code>configs</code>、<code>arch</code>、<code>drivers</code></p>
 <p>下面进入到apps中，看下apps的目录结构：</p>
 <p><img src="/2018/08/05/使用nuttx/apps.png" alt=""></p>
 <p>可以看到apps里面集成了许多应用库，例如modbus，json等，具体目录的功能这里就不细说了。</p>
 <p><code>examples</code>里面是一些应用的例子，你想要的这里基本都能找到。</p>
-<p><code>nshlib</code>是nuttx自带的一个shell，操作类似linux的shell</p>
+<p><code>nshlib</code>是nuttx自带的一个shell，操作类似linux的bash。</p>
 <h2 id="2-如何配置、编译及下载到开发板上"><a href="#2-如何配置、编译及下载到开发板上" class="headerlink" title="2. 如何配置、编译及下载到开发板上"></a>2. 如何配置、编译及下载到开发板上</h2><p>好了，nuttx的目录结构说完了，下面说下如何去使用Nuttx。</p>
 <p>从头去创建一个bsp，这个比较麻烦，一般的做法都是从configs中找一个别人做好的bsp。</p>
 <p>这里我用到的bsp是<code>stm32f4discovery</code>，这个bsp使用的单片机是STM32F407VGT6，与我的开发板单片机封装一样，只是FLASH差了512KB。</p>
@@ -518,10 +540,11 @@ nuttx/    tools     apps/
 <p><img src="/2018/08/05/使用nuttx/osc.png" alt=""></p>
 <p>再看下哪个串口接出来了，开发板上是USART1，使用了PA9,PA10这两个GPIO。</p>
 <p><img src="/2018/08/05/使用nuttx/usart.png" alt=""></p>
-<p>ok，第一步，先配置时钟，这是单片机能正常运行的基础。stm32f407VET6主频最大可以工作在168MHZ，也就是说我们要倍频到168MHZ</p>
+<p>ok，先配置时钟，这是单片机能正常运行的基础。stm32f407VET6主频最大可以工作在168MHZ，也就是说我们要倍频到168MHZ</p>
 <p>时钟配置在<code>configs/stm32f4discovery/include/board.h</code>下：</p>
 <p><img src="/2018/08/05/使用nuttx/clock.png" alt=""></p>
 <p><code>stm32f4discovery</code>原来的晶振是8MHZ，倍频到168MHz。需要修改的地方，在上图已经标记出来了。</p>
+<p>时钟配置完成后，下面就开始配置nuttx工程。我们的目标是配置一个最小系统：<code>使用串口1输出nsh、有/proc文件系统</code></p>
 <h3 id="第一步-选择stm32f4discovery这个bsp下的nsh配置，这个算是比较干净的配置了。"><a href="#第一步-选择stm32f4discovery这个bsp下的nsh配置，这个算是比较干净的配置了。" class="headerlink" title="第一步. 选择stm32f4discovery这个bsp下的nsh配置，这个算是比较干净的配置了。"></a>第一步. 选择<code>stm32f4discovery</code>这个bsp下的<code>nsh</code>配置，这个算是比较干净的配置了。</h3><p><img src="/2018/08/05/使用nuttx/config.png" alt=""></p>
 <p>这一步的作用，主要是将<code>configs/stm32f4discovery/nsh/defconfig</code>拷贝成<code>.config</code>，供下一步<code>make menuconfig</code>使用</p>
 <p><img src="/2018/08/05/使用nuttx/menuconfig.png" alt=""></p>
@@ -596,7 +619,7 @@ nuttx/    tools     apps/
 </tr>
 </tbody>
 </table>
-<p>下面将我需要配置的配置项提取出来，如下：</p>
+<p>下面将我配置好的配置项提取出来，如下：</p>
 <pre><code>Build Setup  ---&gt;
     Build Host Platform (Linux)  ---&gt;
         (X) Linux
@@ -616,7 +639,7 @@ System Type  ---&gt;
             [*] Disable reordering of ttySx devices.
             这个选项的作用是，禁止重新排序ttySx设备文件
             如果不禁用这个，ttyS1永远指向作为终端的串口
-            也就是说，USART3是终端，ttyS1就指向USART3，而不是根据串口实际的顺序。
+            也就是说，如果USART3是终端，ttyS1就指向USART3，而不是USART1
 
 RTOS Features  ---&gt;
     RTOS hooks  ---&gt;
@@ -646,11 +669,11 @@ Application Configuration  ---&gt;
         添加一个helloworld应用
 </code></pre><p>ok，到这里，我们要的最小系统就配置好了：</p>
 <ol>
-<li>支持串口1，115200 8,n,1</li>
+<li>驱动了串口1，115200 8,n,1</li>
 <li>nsh终端从串口1输出</li>
 <li>支持proc文件系统 </li>
 </ol>
-<p>在编译之前，还有一点，就是USART1的引脚我们还没有配置。引脚配置也在<code>configs/stm32f4discovery/include/board.h</code>下:</p>
+<p>在执行make编译之前，还有一点别忘了，就是USART1的引脚我们还没有配置。引脚配置也在<code>configs/stm32f4discovery/include/board.h</code>下:</p>
 <p>原来<code>stm32f4discovery</code>这个bsp使用的是USART2作为终端</p>
 <p><img src="/2018/08/05/使用nuttx/usart2.png" alt=""></p>
 <p><code>GPIO_USART2_RX_1</code>, <code>GPIO_USART2_TX_1</code> 这两个宏定义是具体的引脚，<code>GPIO_USART2_RX</code>, <code>GPIO_USART2_TX</code> 再映射到对应引脚上。</p>
@@ -666,8 +689,8 @@ Application Configuration  ---&gt;
 <p><img src="/2018/08/05/使用nuttx/make.png" alt=""></p>
 <h3 id="第三步-使用Jlink下载到开发板上"><a href="#第三步-使用Jlink下载到开发板上" class="headerlink" title="第三步. 使用Jlink下载到开发板上"></a>第三步. 使用Jlink下载到开发板上</h3><p> 题主使用的JLink V8, <a href="https://www.segger.com/downloads/jlink/#J-LinkSoftwareAndDocumentationPack" target="_blank" rel="noopener">SEGGER</a>官网上有驱动下载：</p>
 <p><img src="/2018/08/05/使用nuttx/jlink.png" alt=""></p>
-<p>下载安装完毕后，可以通过<code>JlinkExe</code>这个命令下载nuttx.bin</p>
-<p>贴出题主使用的配置文件:</p>
+<p>JLink驱动下载安装完毕后，可以通过<code>JlinkExe</code>这个命令下载nuttx.bin</p>
+<p>贴出题主使用的配置文件jlink.cfg:</p>
 <pre><code>device stm32f407ve
 r
 h
@@ -684,34 +707,135 @@ erase      Erase internal flash of selected device. Syntax: Erase
 loadbin    Load *.bin file into target memory.
            Syntax: loadbin &lt;filename&gt;, &lt;addr&gt;
 g          go
-</code></pre><p>下载完毕后，接上串口线，打开minicom，就可以看到<code>nsh</code>的提示符了</p>
-<pre><code>Welcome to minicom 2.7
+</code></pre><p>下载nuttx.bin:</p>
+<p><img src="/2018/08/05/使用nuttx/jlinkexe.png" alt=""></p>
+<p>下载完毕后，接上串口线，打开minicom，就可以看到<code>nsh</code>的提示符了</p>
+<p><img src="/2018/08/05/使用nuttx/minicom.png" alt=""></p>
+<h2 id="3-如何驱动一个设备"><a href="#3-如何驱动一个设备" class="headerlink" title="3. 如何驱动一个设备"></a>3. 如何驱动一个设备</h2><p>nuttx的驱动体系结构类似linux，所以有linux内核基础的你，上手很快。</p>
+<p>GPIO驱动是最简单的一个驱动了，正好我的开发板上有几个灯，可以驱动起来做个闪灯</p>
+<p><img src="/2018/08/05/使用nuttx/led.png" alt=""></p>
+<p>这是三个共阳极的灯，使用<code>PE13</code>,<code>PE14</code>,<code>PE15</code>这三个GPIO控制量灭，输出0时灯亮，输出1时灯灭。</p>
+<p>ok，下面开始我们开始添加驱动。GPIO的顶层驱动在<code>drivers/ioexpander/gpio.c</code></p>
+<p>打开看一下驱动的注册函数：</p>
+<p><img src="/2018/08/05/使用nuttx/gpio.png" alt=""></p>
+<p>这里使用了一个<code>struct gpio_dev_s</code>，我们看一下它的定义:</p>
+<p><img src="/2018/08/05/使用nuttx/gpio_dev.png" alt=""></p>
+<p>也就是说，我们需要在bsp中实现<code>struct gpio_operations_s</code>定义的接口</p>
+<p>我们看一下<code>drivers/ioexpander/gpio.c</code>里面是如何调用<code>struct gpio_operations_s</code>的:</p>
+<p><img src="/2018/08/05/使用nuttx/gpio_ctrl.png" alt=""></p>
+<p>使用的是<code>ioctl</code>接口，cmd是<code>GPIOC_WRITE</code>，调用的是<code>go_write</code>接口。</p>
+<p>看到这里，我们大概就知道如何去做这个GPIO驱动了，只需要在bsp中GPIO底层驱动实现<code>struct gpio_operations_s</code>里面的<code>go_write</code>即可.</p>
+<p>我们到<code>configs/stm32f4discovery/src</code>下，看一下：</p>
+<p><img src="/2018/08/05/使用nuttx/bsp.png" alt=""></p>
+<p>发现没有<code>stm32_gpio.c</code>这个文件，我们可以从别的bsp中拷贝一个，这里使用<code>stm32f103-minimum</code>中的<code>stm32_gpio.c</code>，其实内部操作都一样。</p>
+<p>这里我们只需要<code>OUTPUT</code>这一种GPIO，把其他的删掉。</p>
+<p>下面配置PE13,PE14,PE15这三个引脚:</p>
+<p><code>configs/stm32f4discovery/include/board.h</code>下</p>
+<p><img src="/2018/08/05/使用nuttx/pin2.png" alt=""></p>
+<p><code>configs/stm32f4discovery/src/stm32f4discovery.h</code>下</p>
+<p><img src="/2018/08/05/使用nuttx/pin3.png" alt=""></p>
+<p><code>configs/stm32f4discovery/src/stm32_gpio.c</code>下</p>
+<p><img src="/2018/08/05/使用nuttx/pin.png" alt=""></p>
+<p><img src="/2018/08/05/使用nuttx/pin4.png" alt=""></p>
+<p>当使用ioctl操作GPIO的时候，就会调用到<code>gpout_read</code>, <code>gpout_write</code>函数，其实就是对GPIO寄存器的读写</p>
+<p><img src="/2018/08/05/使用nuttx/pin5.png" alt=""></p>
+<p>好了，GPIO的底层驱动我们写完了，下一步就是要将GPIO的驱动加入到初始化列表里面:</p>
+<p>bsp初始化函数是在<code>configs/stm32f4discovery/src/stm32_bringup.c</code>里的<code>stm32_bringup</code></p>
+<p>将bsp中gpio的注册函数加进去</p>
+<p><img src="/2018/08/05/使用nuttx/bringup.png" alt=""></p>
+<p>Kconfig把GPIO的驱动选上</p>
+<pre><code>Device Drivers  ---&gt;
+    IO Expander/GPIO Support  ---&gt;
+        [*] GPIO driver
+</code></pre><p>编译，下载nuttx.bin，就可以在<code>/dev/</code>下看到注册的GPIO设备文件了:</p>
+<p><img src="/2018/08/05/使用nuttx/gpout.png" alt=""></p>
+<h2 id="4-如何在app中添加一个应用"><a href="#4-如何在app中添加一个应用" class="headerlink" title="4. 如何在app中添加一个应用"></a>4. 如何在app中添加一个应用</h2><p>上一节我们把3个LED的驱动都写好了，也注册进了操作系统中了，下面我们写个app来控制一下这几个灯</p>
+<p>一般的做法是, 把app创建在<code>apps/examples</code>下，这里我们添加一个应用程序<code>myled</code></p>
+<p>首先，在<code>apps/examples/</code>下，拷贝<code>hello</code>成<code>myled</code>，我们主要用里面的文件</p>
+<p>进入到myled下，重命名一下hello_main.c到myled_main.c</p>
+<p><img src="/2018/08/05/使用nuttx/myled.png" alt=""></p>
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Kconfig</td>
+<td>Kconfig配置文件</td>
+</tr>
+<tr>
+<td>Make.defs</td>
+<td>添加应用目录到构建列表</td>
+</tr>
+<tr>
+<td>Makefile</td>
+<td>make编译规则文件</td>
+</tr>
+<tr>
+<td>myled_main.c</td>
+<td>应用程序入口源文件</td>
+</tr>
+</tbody>
+</table>
+<p>了解这些文件的用途，下面开始改动他们：</p>
+<p><code>KConfig</code></p>
+<p><img src="/2018/08/05/使用nuttx/kconfig.png" alt=""></p>
+<p><code>Make.defs</code></p>
+<p><img src="/2018/08/05/使用nuttx/defs.png" alt=""></p>
+<p><code>Makefile</code></p>
+<blockquote>
+<p>注意下 APPNAME = myled，结尾不要有空格，这个变量是拼接字符串用的，有空格会找不到入口函数</p>
+</blockquote>
+<p><img src="/2018/08/05/使用nuttx/makefile.png" alt=""></p>
+<p><code>myled_main.c</code></p>
+<p><img src="/2018/08/05/使用nuttx/myledapp.png" alt=""></p>
+<p>到此，<code>myled</code>应用就写完了，LED1会以1秒的频率量灭。</p>
+<p>下面将<code>myled</code>这个应用编译进来</p>
+<pre><code>Application Configuration  ---&gt;
+    Examples  ---&gt;
+        [*] &quot;MyLED&quot; example
+        (100) MyLED task priority
+        (2048) MyLED stack size
+</code></pre><p>编译，下载nuttx.bin，就可以看到myled这个应用了，运行后可以看到LED0在闪烁:</p>
+<p><img src="/2018/08/05/使用nuttx/myledrun.png" alt=""></p>
+<h2 id="5-如何设置app自启动"><a href="#5-如何设置app自启动" class="headerlink" title="5. 如何设置app自启动"></a>5. 如何设置app自启动</h2><p>以上我们写的myled，是不能自启动的，系统复位以后，就又回到nsh了。</p>
+<p>下面说下如何让nuttx一启动就运行<code>myled</code></p>
+<p>nuttx是支持启动脚本的，这点与linux相似，可以通过<code>/etc/init.d/rcS</code>脚本启动应用程序。下面是就是如何将rcS文件做到系统中了。</p>
+<p>怎么做，nuttx其实已经说了，说明在<code>apps/nshlib/README.txt</code>，写的比较散，下面我来演示下如何具体操作:</p>
+<p>首先在<code>configs/stm32f4discovery/include</code>下创建<code>etc</code>，结构如下：</p>
+<pre><code>etc
+└── init.d
+    └── rcS
+</code></pre><p><code>rcS</code>文件把要启动的应用写上：</p>
+<pre><code>dopler &amp;
 
-OPTIONS: I18n
-Compiled on Feb  7 2016, 13:37:27.
-Port /dev/ttyUSB0, 20:56:00
+nsh是支持应用后台运行的
+</code></pre><p>下一步，制作romfs：</p>
+<pre><code>genromfs -f romfs_img -d etc
+xxd -i romfs_img &gt;nsh_romfsimg.h
+</code></pre><p><code>nsh_romfsimg.h</code>就是romfs的十六进制表示，注意这个名字是固定的</p>
+<p>下面，让nuttx支持romfs，并将<code>nsh_romfsimg.h</code>编译进去</p>
+<pre><code>File Systems  ---&gt;
+    [*] ROMFS file system
 
-Press CTRL-A Z for help on special keys
+Application Configuration  ---&gt;
+    NSH Library  ---&gt;
+        Scripting Support  ---&gt;
+            [*] Support ROMFS start-up script
+            (/etc) ROMFS mount point (NEW)
+            (init.d/rcS) Relative path to startup script (NEW)
+            ROMFS header location (Architecture-specific ROMFS path)  ---&gt;
 
+            这个选项的意思是，使用体系结构指定的nsh_romfsimg.h
+            nshlib会去使用&lt;arch/board/nsh_romfsimg.h&gt;这个文件
+            你到nuttx的include下找下这个文件，你就知道是怎么回事了
+</code></pre><p>编译，下载nuttx.bin，然后启动nuttx，就看到myled已经在运行了!</p>
+<p><img src="/2018/08/05/使用nuttx/myledrun2.png" alt=""></p>
+<p>谢谢！</p>
 
-NuttShell (NSH)
-nsh&gt; ?
-help usage:  help [-v] [&lt;cmd&gt;]
-
-[           cmp         false       mkdir       rm          true
-?           dirname     free        mh          rmdir       uname
-basename    dd          help        mount       set         umount
-break       df          hexdump     mv          sh          unset
-cat         echo        kill        mw          sleep       usleep
-cd          exec        ls          ps          test        xd
-cp          exit        mb          pwd         time
-
-Builtin Apps:
-hello
-nsh&gt; hello
-Hello, World!!
-nsh&gt;
-</code></pre><h2 id="3-如何在app中添加一个应用"><a href="#3-如何在app中添加一个应用" class="headerlink" title="3. 如何在app中添加一个应用"></a>3. 如何在app中添加一个应用</h2><h2 id="4-如何驱动一个设备"><a href="#4-如何驱动一个设备" class="headerlink" title="4. 如何驱动一个设备"></a>4. 如何驱动一个设备</h2><h2 id="5-自己写的一个多线程应用框架"><a href="#5-自己写的一个多线程应用框架" class="headerlink" title="5. 自己写的一个多线程应用框架"></a>5. 自己写的一个多线程应用框架</h2>
       
     </div>
 
@@ -728,6 +852,12 @@ nsh&gt;
     
 
     <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/nuttx/" rel="tag"># nuttx</a>
+          
+        </div>
       
 
       
@@ -809,6 +939,19 @@ nsh&gt;
               
 
               
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                    <span class="site-state-item-count">1</span>
+                    <span class="site-state-item-name">tags</span>
+                  
+                </div>
+              
             </nav>
           
 
@@ -840,7 +983,7 @@ nsh&gt;
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#使用Nuttx"><span class="nav-number">1.</span> <span class="nav-text">使用Nuttx</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#0-前言"><span class="nav-number">1.1.</span> <span class="nav-text">0. 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Nuttx的目录结构"><span class="nav-number">1.2.</span> <span class="nav-text">1. Nuttx的目录结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-如何配置、编译及下载到开发板上"><span class="nav-number">1.3.</span> <span class="nav-text">2. 如何配置、编译及下载到开发板上</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#第一步-选择stm32f4discovery这个bsp下的nsh配置，这个算是比较干净的配置了。"><span class="nav-number">1.3.1.</span> <span class="nav-text">第一步. 选择stm32f4discovery这个bsp下的nsh配置，这个算是比较干净的配置了。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第二步-使用arm-none-eabi-gcc编译"><span class="nav-number">1.3.2.</span> <span class="nav-text">第二步. 使用arm-none-eabi-gcc编译</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第三步-使用Jlink下载到开发板上"><span class="nav-number">1.3.3.</span> <span class="nav-text">第三步. 使用Jlink下载到开发板上</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-如何在app中添加一个应用"><span class="nav-number">1.4.</span> <span class="nav-text">3. 如何在app中添加一个应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-如何驱动一个设备"><span class="nav-number">1.5.</span> <span class="nav-text">4. 如何驱动一个设备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-自己写的一个多线程应用框架"><span class="nav-number">1.6.</span> <span class="nav-text">5. 自己写的一个多线程应用框架</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#使用Nuttx"><span class="nav-number">1.</span> <span class="nav-text">使用Nuttx</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#0-前言"><span class="nav-number">1.1.</span> <span class="nav-text">0. 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Nuttx的目录结构"><span class="nav-number">1.2.</span> <span class="nav-text">1. Nuttx的目录结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-如何配置、编译及下载到开发板上"><span class="nav-number">1.3.</span> <span class="nav-text">2. 如何配置、编译及下载到开发板上</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#第一步-选择stm32f4discovery这个bsp下的nsh配置，这个算是比较干净的配置了。"><span class="nav-number">1.3.1.</span> <span class="nav-text">第一步. 选择stm32f4discovery这个bsp下的nsh配置，这个算是比较干净的配置了。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第二步-使用arm-none-eabi-gcc编译"><span class="nav-number">1.3.2.</span> <span class="nav-text">第二步. 使用arm-none-eabi-gcc编译</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第三步-使用Jlink下载到开发板上"><span class="nav-number">1.3.3.</span> <span class="nav-text">第三步. 使用Jlink下载到开发板上</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-如何驱动一个设备"><span class="nav-number">1.4.</span> <span class="nav-text">3. 如何驱动一个设备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-如何在app中添加一个应用"><span class="nav-number">1.5.</span> <span class="nav-text">4. 如何在app中添加一个应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-如何设置app自启动"><span class="nav-number">1.6.</span> <span class="nav-text">5. 如何设置app自启动</span></a></li></ol></li></ol></div>
             
 
           </div>
