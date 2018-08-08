@@ -344,7 +344,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2018-08-07 20:16:39" itemprop="dateModified" datetime="2018-08-07T20:16:39+08:00">2018-08-07</time>
+                <time title="Modified: 2018-08-08 09:40:54" itemprop="dateModified" datetime="2018-08-08T09:40:54+08:00">2018-08-08</time>
               
             
           </span>
@@ -714,7 +714,9 @@ g          go
 <pre><code>Device Drivers  ---&gt;
     IO Expander/GPIO Support  ---&gt;
         [*] GPIO driver
-</code></pre><p>编译，下载nuttx.bin，就可以在<code>/dev/</code>下看到注册的GPIO设备文件了:</p>
+</code></pre><p>由于<code>stm32_gpio.c</code>是我们新添加的文件，在<code>configs/stm32f4discovery/src/Makefile</code>里面需要把它加进去</p>
+<p><img src="/2018/08/05/使用nuttx/makefile2.png" alt=""></p>
+<p>编译，下载nuttx.bin，就可以在<code>/dev/</code>下看到注册的GPIO设备文件了:</p>
 <p><img src="/2018/08/05/使用nuttx/gpout.png" alt=""></p>
 <h2 id="4-如何在app中添加一个应用"><a href="#4-如何在app中添加一个应用" class="headerlink" title="4. 如何在app中添加一个应用"></a>4. 如何在app中添加一个应用</h2><p>上一节我们把3个LED的驱动都写好了，也注册进了操作系统中了，下面我们写个app来控制一下这几个灯</p>
 <p>一般的做法是, 把app创建在<code>apps/examples</code>下，这里我们添加一个应用程序<code>myled</code></p>

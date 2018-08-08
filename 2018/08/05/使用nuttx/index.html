@@ -142,6 +142,7 @@
 <meta property="og:image" content="https://ijulyrain.github.io/2018/08/05/使用nuttx/pin4.png">
 <meta property="og:image" content="https://ijulyrain.github.io/2018/08/05/使用nuttx/pin5.png">
 <meta property="og:image" content="https://ijulyrain.github.io/2018/08/05/使用nuttx/bringup.png">
+<meta property="og:image" content="https://ijulyrain.github.io/2018/08/05/使用nuttx/makefile2.png">
 <meta property="og:image" content="https://ijulyrain.github.io/2018/08/05/使用nuttx/gpout.png">
 <meta property="og:image" content="https://ijulyrain.github.io/2018/08/05/使用nuttx/myled.png">
 <meta property="og:image" content="https://ijulyrain.github.io/2018/08/05/使用nuttx/kconfig.png">
@@ -150,7 +151,7 @@
 <meta property="og:image" content="https://ijulyrain.github.io/2018/08/05/使用nuttx/myledapp.png">
 <meta property="og:image" content="https://ijulyrain.github.io/2018/08/05/使用nuttx/myledrun.png">
 <meta property="og:image" content="https://ijulyrain.github.io/2018/08/05/使用nuttx/myledrun2.png">
-<meta property="og:updated_time" content="2018-08-07T12:16:39.000Z">
+<meta property="og:updated_time" content="2018-08-08T01:40:54.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="使用nuttx">
 <meta name="twitter:description" content="使用Nuttx0. 前言这里不说Nuttx特别底层的东西，只说如何使用Nuttx开发应用程序，因为大部分情况，领导关心的是应用如何写的快而不是底层是如何工作的。 本文档默认你会使用Kconfig、Linux。 之所以选择Nuttx作为操作系统，一是因为Nuttx提供的接口支持Posix，大部分Linux上的应用程序都可以移植过来，对于比较复杂的应用，这点是极好的；二是Nuttx支持动态加载程">
@@ -379,7 +380,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2018-08-07 20:16:39" itemprop="dateModified" datetime="2018-08-07T20:16:39+08:00">2018-08-07</time>
+                <time title="Modified: 2018-08-08 09:40:54" itemprop="dateModified" datetime="2018-08-08T09:40:54+08:00">2018-08-08</time>
               
             
           </span>
@@ -747,7 +748,9 @@ g          go
 <pre><code>Device Drivers  ---&gt;
     IO Expander/GPIO Support  ---&gt;
         [*] GPIO driver
-</code></pre><p>编译，下载nuttx.bin，就可以在<code>/dev/</code>下看到注册的GPIO设备文件了:</p>
+</code></pre><p>由于<code>stm32_gpio.c</code>是我们新添加的文件，在<code>configs/stm32f4discovery/src/Makefile</code>里面需要把它加进去</p>
+<p><img src="/2018/08/05/使用nuttx/makefile2.png" alt=""></p>
+<p>编译，下载nuttx.bin，就可以在<code>/dev/</code>下看到注册的GPIO设备文件了:</p>
 <p><img src="/2018/08/05/使用nuttx/gpout.png" alt=""></p>
 <h2 id="4-如何在app中添加一个应用"><a href="#4-如何在app中添加一个应用" class="headerlink" title="4. 如何在app中添加一个应用"></a>4. 如何在app中添加一个应用</h2><p>上一节我们把3个LED的驱动都写好了，也注册进了操作系统中了，下面我们写个app来控制一下这几个灯</p>
 <p>一般的做法是, 把app创建在<code>apps/examples</code>下，这里我们添加一个应用程序<code>myled</code></p>
